@@ -76,7 +76,7 @@
                 // Capturar el enlace de descarga
                 const downloadUrl = event.data;
                 if (downloadUrl && downloadUrl.startsWith('http')) {
-                    // Enviar el enlace de descarga al juego
+                    // Enviar el enlace de descarga al script Lua
                     window.parent.postMessage(downloadUrl, '*');
                 }
             });
