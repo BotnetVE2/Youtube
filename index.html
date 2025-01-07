@@ -4,10 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Descargar Videos de YouTube</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #282828;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #ff0000;
+            margin-bottom: 20px;
+        }
+        #botonDescarga {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Descargar Videos de YouTube</h1>
+        <div id="botonDescarga">
+            <!-- Aquí se mostrará el botón de descarga -->
+        </div>
+    </div>
+
     <script>
         // Obtener el video_id desde la URL
         const urlParams = new URLSearchParams(window.location.search);
-        const videoId = urlParams.get('video');
+        const videoId = window.location.pathname.split('/').pop(); // Extraer la ID del video de la URL
 
         if (videoId) {
             // Crear el iframe de Loader.to
@@ -37,22 +75,18 @@
             });
 
             // Observar cambios en el atributo href del botón de descarga
-            observer.observe(iframe.contentDocument.getElementById('downloadButton'), {
-                attributes: true
-            });
+            if (iframe.contentDocument && iframe.contentDocument.getElementById('downloadButton')) {
+                observer.observe(iframe.contentDocument.getElementById('downloadButton'), {
+                    attributes: true
+                });
+            } else {
+                console.error('No se pudo acceder al contenido del iframe o el botón de descarga no existe.');
+            }
         } else {
             // Si no hay video_id, mostrar un mensaje
             const botonDescarga = document.getElementById('botonDescarga');
             botonDescarga.innerHTML = '<p>No se ha proporcionado una URL de video.</p>';
         }
     </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Descargar Videos de YouTube</h1>
-        <div id="botonDescarga">
-            <!-- Aquí se mostrará el botón de descarga -->
-        </div>
-    </div>
 </body>
 </html>
