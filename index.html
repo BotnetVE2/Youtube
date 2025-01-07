@@ -69,16 +69,22 @@
             botonDescarga.innerHTML = '';
             botonDescarga.appendChild(iframe);
 
-            // Escuchar mensajes desde el iframe
-            window.addEventListener('message', function(event) {
-                if (event.origin !== 'https://loader.to') return; // Asegurarse de que el mensaje viene de Loader.to
+            // Escuchar cambios en el atributo href del botón de descarga
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'href') {
+                        const downloadUrl = iframe.contentDocument.getElementById('downloadButton').href;
+                        if (downloadUrl && downloadUrl.startsWith('http')) {
+                            // Enviar el enlace de descarga al script Lua
+                            window.parent.postMessage(downloadUrl, '*');
+                        }
+                    }
+                });
+            });
 
-                // Capturar el enlace de descarga
-                const downloadUrl = event.data;
-                if (downloadUrl && downloadUrl.startsWith('http')) {
-                    // Enviar el enlace de descarga al script Lua
-                    window.parent.postMessage(downloadUrl, '*');
-                }
+            // Observar cambios en el atributo href del botón de descarga
+            observer.observe(iframe.contentDocument.getElementById('downloadButton'), {
+                attributes: true
             });
         } else {
             // Si no hay video_id, mostrar un mensaje
