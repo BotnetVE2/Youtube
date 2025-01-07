@@ -56,7 +56,7 @@
         const videoId = urlParams.get('video');
 
         if (videoId) {
-            // Generar el iframe de Loader.to con el video_id
+            // Crear el iframe de Loader.to
             const iframe = document.createElement('iframe');
             iframe.src = `https://loader.to/api/button/?url=https://www.youtube.com/watch?v=${videoId}&f=mp3&color=#FF0000`;
             iframe.style.width = '230px';
@@ -66,8 +66,20 @@
 
             // Mostrar el iframe en la página
             const botonDescarga = document.getElementById('botonDescarga');
-            botonDescarga.innerHTML = ''; // Limpiar contenido previo
+            botonDescarga.innerHTML = '';
             botonDescarga.appendChild(iframe);
+
+            // Escuchar mensajes desde el iframe
+            window.addEventListener('message', function(event) {
+                if (event.origin !== 'https://loader.to') return; // Asegurarse de que el mensaje viene de Loader.to
+
+                // Capturar el enlace de descarga
+                const downloadUrl = event.data;
+                if (downloadUrl && downloadUrl.startsWith('http')) {
+                    // Enviar el enlace de descarga al juego
+                    window.parent.postMessage(downloadUrl, '*');
+                }
+            });
         } else {
             // Si no hay video_id, mostrar un mensaje
             const botonDescarga = document.getElementById('botonDescarga');
