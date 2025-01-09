@@ -74,20 +74,32 @@
         const iframe = document.querySelector('iframe');
         if (iframe) {
             iframe.onload = function() {
-                // Acceder al contenido del iframe
-                const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                console.log('Iframe cargado. Esperando el primer clic...');
 
-                // Buscar el botón de descarga dentro del iframe
-                const downloadButton = iframeDocument.getElementById('downloadButton');
+                // Escuchar el evento de clic en el iframe
+                iframe.contentWindow.document.addEventListener('click', () => {
+                    console.log('Primer clic detectado. Intentando obtener el enlace de descarga...');
 
-                if (downloadButton) {
-                    // Simular un clic en el botón de descarga
-                    downloadButton.click();
-                    console.log('Botón de descarga presionado automáticamente.');
-                } else {
-                    console.error('No se encontró el botón de descarga en el iframe.');
-                }
+                    // Buscar el botón de descarga dentro del iframe
+                    const downloadButton = iframe.contentWindow.document.getElementById('downloadButton');
+
+                    if (downloadButton) {
+                        console.log('Botón de descarga encontrado.');
+
+                        // Obtener el enlace de descarga del botón
+                        const downloadUrl = downloadButton.href;
+                        if (downloadUrl) {
+                            console.log('Enlace de descarga obtenido:', downloadUrl);
+                        } else {
+                            console.error('No se encontró un enlace de descarga en el botón.');
+                        }
+                    } else {
+                        console.error('No se encontró el botón de descarga en el iframe.');
+                    }
+                });
             };
+        } else {
+            console.error('No se encontró el iframe en la página.');
         }
     </script>
 </body>
