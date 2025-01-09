@@ -43,9 +43,9 @@
     </div>
 
     <script>
-        // Obtener el video_id desde la URL
+        // Obtener el video_id desde los parámetros de la URL
         const urlParams = new URLSearchParams(window.location.search);
-        const videoId = window.location.pathname.split('/').pop(); // Extraer la ID del video de la URL
+        const videoId = urlParams.get('video_id'); // Extraer el video_id de la URL
 
         if (videoId) {
             // Crear el iframe de Loader.to
@@ -60,28 +60,6 @@
             const botonDescarga = document.getElementById('botonDescarga');
             botonDescarga.innerHTML = '';
             botonDescarga.appendChild(iframe);
-
-            // Escuchar cambios en el atributo href del botón de descarga
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'href') {
-                        const downloadUrl = iframe.contentDocument.getElementById('downloadButton').href;
-                        if (downloadUrl && downloadUrl.startsWith('http')) {
-                            // Enviar el enlace de descarga al script Lua
-                            window.parent.postMessage(downloadUrl, '*');
-                        }
-                    }
-                });
-            });
-
-            // Observar cambios en el atributo href del botón de descarga
-            if (iframe.contentDocument && iframe.contentDocument.getElementById('downloadButton')) {
-                observer.observe(iframe.contentDocument.getElementById('downloadButton'), {
-                    attributes: true
-                });
-            } else {
-                console.error('No se pudo acceder al contenido del iframe o el botón de descarga no existe.');
-            }
         } else {
             // Si no hay video_id, mostrar un mensaje
             const botonDescarga = document.getElementById('botonDescarga');
