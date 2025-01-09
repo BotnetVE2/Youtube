@@ -42,6 +42,7 @@
         </div>
     </div>
 
+    <!-- Primer script: Generar el iframe de loader.to -->
     <script>
         // Obtener el video_id desde los parámetros de la URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -64,6 +65,29 @@
             // Si no hay video_id, mostrar un mensaje
             const botonDescarga = document.getElementById('botonDescarga');
             botonDescarga.innerHTML = '<p>No se ha proporcionado una URL de video.</p>';
+        }
+    </script>
+
+    <!-- Segundo script: Presionar el botón automáticamente -->
+    <script>
+        // Esperar a que el iframe se cargue
+        const iframe = document.querySelector('iframe');
+        if (iframe) {
+            iframe.onload = function() {
+                // Acceder al contenido del iframe
+                const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+                // Buscar el botón de descarga dentro del iframe
+                const downloadButton = iframeDocument.getElementById('downloadButton');
+
+                if (downloadButton) {
+                    // Simular un clic en el botón de descarga
+                    downloadButton.click();
+                    console.log('Botón de descarga presionado automáticamente.');
+                } else {
+                    console.error('No se encontró el botón de descarga en el iframe.');
+                }
+            };
         }
     </script>
 </body>
