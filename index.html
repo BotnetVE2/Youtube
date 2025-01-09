@@ -61,14 +61,17 @@
             const botonDescarga = document.getElementById('botonDescarga');
             botonDescarga.innerHTML = '';
             botonDescarga.appendChild(iframe);
+
+            console.log('Iframe creado y cargado.');
         } else {
             // Si no hay video_id, mostrar un mensaje
             const botonDescarga = document.getElementById('botonDescarga');
             botonDescarga.innerHTML = '<p>No se ha proporcionado una URL de video.</p>';
+            console.error('No se proporcionó un video_id.');
         }
     </script>
 
-    <!-- Segundo script: Presionar el botón automáticamente -->
+    <!-- Segundo script: Usar postMessage para interactuar con el iframe -->
     <script>
         // Esperar a que el iframe se cargue
         const iframe = document.querySelector('iframe');
@@ -77,25 +80,29 @@
                 console.log('Iframe cargado. Esperando el primer clic...');
 
                 // Escuchar el evento de clic en el iframe
-                iframe.contentWindow.document.addEventListener('click', () => {
-                    console.log('Primer clic detectado. Intentando obtener el enlace de descarga...');
+                iframe.contentWindow.addEventListener('click', () => {
+                    console.log('Primer clic detectado. Intentando comunicar con postMessage...');
 
-                    // Buscar el botón de descarga dentro del iframe
-                    const downloadButton = iframe.contentWindow.document.getElementById('downloadButton');
+                    // Enviar un mensaje al iframe
+                    iframe.contentWindow.postMessage({ action: 'download' }, '*');
 
-                    if (downloadButton) {
-                        console.log('Botón de descarga encontrado.');
+                    // Escuchar mensajes desde el iframe
+                    window.addEventListener('message', (event) => {
+                        console.log('Mensaje recibido desde el iframe:', event.data);
 
-                        // Obtener el enlace de descarga del botón
-                        const downloadUrl = downloadButton.href;
-                        if (downloadUrl) {
-                            console.log('Enlace de descarga obtenido:', downloadUrl);
-                        } else {
-                            console.error('No se encontró un enlace de descarga en el botón.');
+                        // Verificar el origen del mensaje
+                        if (event.origin !== 'https://loader.to') {
+                            console.warn('Mensaje recibido de un origen no confiable:', event.origin);
+                            return;
                         }
-                    } else {
-                        console.error('No se encontró el botón de descarga en el iframe.');
-                    }
+
+                        // Verificar si el mensaje contiene el enlace de descarga
+                        if (event.data.downloadUrl) {
+                            console.log('Enlace de descarga recibido:', event.data.downloadUrl);
+                        } else {
+                            console.warn('El mensaje no contiene un enlace de descarga.');
+                        }
+                    });
                 });
             };
         } else {
